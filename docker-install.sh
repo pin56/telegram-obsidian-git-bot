@@ -96,11 +96,11 @@ EOF
     print_success "Dockerfile создан"
 }
 
-# Создание docker-compose.yml
+# Создание docker compose.yml
 create_docker_compose() {
-    print_info "Создание docker-compose.yml..."
+    print_info "Создание docker compose.yml..."
     
-    cat > docker-compose.yml << EOF
+    cat > docker compose.yml << EOF
 version: '3.8'
 
 services:
@@ -121,7 +121,7 @@ networks:
     driver: bridge
 EOF
     
-    print_success "docker-compose.yml создан"
+    print_success "docker compose.yml создан"
 }
 
 # Создание .env файла
@@ -283,7 +283,7 @@ uninstall() {
     # Удаление файлов
     rm -f /usr/local/bin/telegram-bot-docker
     rm -f Dockerfile
-    rm -f docker-compose.yml
+    rm -f docker compose.yml
     rm -f env
     
     print_success "Удаление завершено!"
