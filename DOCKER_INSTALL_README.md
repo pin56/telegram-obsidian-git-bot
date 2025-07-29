@@ -25,7 +25,7 @@ chmod +x docker_install.sh
 ## Требования
 
 - Linux система
-- Docker и Docker Compose
+- Docker (с встроенным Docker Compose)
 - Git
 - Telegram Bot Token
 - GitHub Personal Access Token

@@ -55,7 +55,7 @@ check_system() {
     fi
     
     # Проверка Docker Compose
-    if ! command -v docker-compose &> /dev/null; then
+    if ! command -v docker compose &> /dev/null; then
         print_error "Docker Compose не установлен. Установите Docker Compose и попробуйте снова"
         exit 1
     fi
@@ -242,8 +242,8 @@ Requires=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=$(pwd)
-ExecStart=/usr/local/bin/docker-compose up -d
-ExecStop=/usr/local/bin/docker-compose down
+    ExecStart=/usr/bin/docker compose up -d
+    ExecStop=/usr/bin/docker compose down
 TimeoutStartSec=0
 User=$USER
 Group=$USER
@@ -266,30 +266,30 @@ cd "$(dirname "$0")/.." 2>/dev/null || cd /opt/telegram-obsidian-bot
 
 case "$1" in
     start)
-        docker-compose up -d
+        docker compose up -d
         echo "Бот запущен"
         ;;
     stop)
-        docker-compose down
+        docker compose down
         echo "Бот остановлен"
         ;;
     restart)
-        docker-compose restart
+        docker compose restart
         echo "Бот перезапущен"
         ;;
     status)
-        docker-compose ps
+        docker compose ps
         ;;
     logs)
-        docker-compose logs -f
+        docker compose logs -f
         ;;
     shell)
-        docker-compose exec telegram-bot /bin/bash
+        docker compose exec telegram-bot /bin/bash
         ;;
     update)
         git pull
-        docker-compose build --no-cache
-        docker-compose up -d
+        docker compose build --no-cache
+        docker compose up -d
         echo "Бот обновлен и перезапущен"
         ;;
     *)
@@ -339,10 +339,10 @@ setup_git() {
 # Сборка и запуск Docker контейнера
 build_and_run() {
     print_info "Сборка Docker образа..."
-    docker-compose build --no-cache
+    docker compose build --no-cache
     
     print_info "Запуск контейнера..."
-    docker-compose up -d
+    docker compose up -d
     
     print_success "Контейнер запущен"
 }
@@ -366,7 +366,7 @@ check_status() {
     
     sleep 10
     
-    if docker-compose ps | grep -q "Up"; then
+    if docker compose ps | grep -q "Up"; then
         print_success "Бот успешно запущен!"
         print_info "Для просмотра логов используйте: telegram-bot logs"
         print_info "Для остановки используйте: telegram-bot stop"
@@ -374,7 +374,7 @@ check_status() {
         print_info "Для входа в контейнер используйте: telegram-bot shell"
     else
         print_error "Бот не запустился. Проверьте логи: telegram-bot logs"
-        docker-compose logs
+        docker compose logs
         exit 1
     fi
 }
@@ -456,7 +456,7 @@ case "${1:-install}" in
         ;;
     uninstall)
         print_info "Удаление Telegram Obsidian Git Bot..."
-        docker-compose down
+        docker compose down
         sudo systemctl disable telegram-obsidian-bot.service
         sudo rm -f /etc/systemd/system/telegram-obsidian-bot.service
         sudo rm -f /usr/local/bin/telegram-bot-docker

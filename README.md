@@ -140,7 +140,8 @@ sudo ./install.sh uninstall
 ## Требования
 
 - Linux (Ubuntu, Debian, CentOS, Fedora, Arch Linux)
-- Python 3.7+
+- Python 3.7+ (для обычной установки)
+- Docker (с встроенным Docker Compose) (для Docker установки)
 - Git
 - Root права (sudo)
 
