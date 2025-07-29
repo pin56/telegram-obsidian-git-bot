@@ -46,6 +46,12 @@ check_docker() {
         print_error "Docker не запущен или у вас нет прав. Запустите Docker и попробуйте снова."
         exit 1
     fi
+    
+    # Проверяем доступность docker compose
+    if ! docker compose version &> /dev/null; then
+        print_error "Docker Compose не доступен. Убедитесь, что у вас установлена современная версия Docker."
+        exit 1
+    fi
 }
 
 # Создание Dockerfile
@@ -166,38 +172,38 @@ create_management_script() {
 
 CONTAINER_NAME="telegram-obsidian-bot"
 
-case "$1" in
-    start)
-        docker-compose up -d
-        echo "Бот запущен"
-        ;;
-    stop)
-        docker-compose down
-        echo "Бот остановлен"
-        ;;
-    restart)
-        docker-compose restart
-        echo "Бот перезапущен"
-        ;;
-    status)
-        docker-compose ps
-        ;;
-    logs)
-        docker-compose logs -f
-        ;;
-    update)
-        docker-compose down
-        docker-compose build --no-cache
-        docker-compose up -d
-        echo "Обновление завершено!"
-        ;;
-    config)
-        nano env
-        docker-compose restart
-        ;;
-    shell)
-        docker-compose exec telegram-obsidian-bot bash
-        ;;
+    case "$1" in
+        start)
+            docker compose up -d
+            echo "Бот запущен"
+            ;;
+        stop)
+            docker compose down
+            echo "Бот остановлен"
+            ;;
+        restart)
+            docker compose restart
+            echo "Бот перезапущен"
+            ;;
+        status)
+            docker compose ps
+            ;;
+        logs)
+            docker compose logs -f
+            ;;
+        update)
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
+            echo "Обновление завершено!"
+            ;;
+        config)
+            nano env
+            docker compose restart
+            ;;
+        shell)
+            docker compose exec telegram-obsidian-bot bash
+            ;;
     *)
         echo "Использование: $0 {start|stop|restart|status|logs|update|config|shell}"
         echo "  start   - запустить бота"
@@ -231,10 +237,10 @@ create_data_dir() {
 # Сборка и запуск
 build_and_run() {
     print_info "Сборка Docker образа..."
-    docker-compose build
+    docker compose build
     
     print_info "Запуск контейнера..."
-    docker-compose up -d
+    docker compose up -d
     
     print_success "Контейнер запущен"
 }
@@ -271,7 +277,7 @@ uninstall() {
     print_warning "Удаление Telegram Obsidian Git Bot..."
     
     # Остановка и удаление контейнеров
-    docker-compose down 2>/dev/null || true
+    docker compose down 2>/dev/null || true
     docker rmi $IMAGE_NAME 2>/dev/null || true
     
     # Удаление файлов

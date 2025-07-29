@@ -16,15 +16,15 @@ Telegram бот для автоматического сохранения со�
 
 
 
-### 2. Интерактивная установка (рекомендуется)
+### 1. Интерактивная установка (рекомендуется)
 ```bash
-wget https://raw.githubusercontent.com/pin56/telegram-obsidian-git-bot/main/install.sh
+wget https://raw.github.com/pin56/telegram-obsidian-git-bot/main/install.sh
 chmod +x install.sh
 sudo ./install.sh
 ```
 
 
-### 4. Docker установка (не проверено!!!)
+### 2. Docker установка (не проверено!!!)
 ```bash
 wget https://raw.githubusercontent.com/pin56/telegram-obsidian-git-bot/main/docker-install.sh
 chmod +x docker-install.sh
