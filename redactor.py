@@ -33,7 +33,7 @@ async def update_file(autor = None, text = ''):
 
 def load_from_git():
 
-    REPO_URL = f"https://{GIT_TOKEN}@github.com/pin-obs/obs-vault.git"
+    REPO_URL = os.getenv('REPO_URL', f"https://{GIT_TOKEN}@github.com/pin-obs/obs-vault.git")
     LOCAL_REPO = "obsidian_files"
 
 
@@ -50,7 +50,7 @@ def load_from_git():
             return e
 
 async def save_to_git():
-    REPO_URL = f"https://{GIT_TOKEN}@github.com/pin-obs/obs-vault.git"
+    REPO_URL = os.getenv('REPO_URL', f"https://{GIT_TOKEN}@github.com/pin-obs/obs-vault.git")
     LOCAL_REPO = "obsidian_files"
 
     # Open the existing repo, do not clone every time

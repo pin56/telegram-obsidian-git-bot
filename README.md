@@ -24,11 +24,11 @@ sudo ./install.sh
 ```
 
 
-### 2. Docker установка (не проверено!!!)
+### 2. Docker установка (рекомендуется)
 ```bash
-wget https://raw.githubusercontent.com/pin56/telegram-obsidian-git-bot/main/docker-install.sh
-chmod +x docker-install.sh
-sudo ./docker-install.sh
+wget https://raw.githubusercontent.com/pin56/telegram-obsidian-git-bot/main/docker_install.sh
+chmod +x docker_install.sh
+./docker_install.sh
 ```
 
 ## Подготовка
@@ -64,10 +64,13 @@ telegram-bot update     # обновить
 telegram-bot config     # конфигурация
 
 # Docker установка
-telegram-bot-docker start   # запустить
-telegram-bot-docker stop    # остановить
-telegram-bot-docker logs    # логи
-telegram-bot-docker shell   # войти в контейнер
+telegram-bot start      # запустить
+telegram-bot stop       # остановить
+telegram-bot restart    # перезапустить
+telegram-bot status     # статус
+telegram-bot logs       # логи
+telegram-bot shell      # войти в контейнер
+telegram-bot update     # обновить
 ```
 
 ## Конфигурация
@@ -90,7 +93,7 @@ telegram-obsidian-git-bot/
 ├── requirements.txt    # Python зависимости
 ├── install.sh          # Интерактивный установщик
 ├── quick-install.sh    # Быстрый установщик
-├── docker-install.sh   # Docker установщик
+├── docker_install.sh   # Docker установщик
 ├── check-system.sh     # Проверка системы
 ├── INSTALL.md          # Подробная инструкция
 └── README.md           # Этот файл
@@ -131,7 +134,7 @@ telegram-bot update
 sudo ./install.sh uninstall
 
 # Docker установка
-sudo ./docker-install.sh uninstall
+./docker_install.sh uninstall
 ```
 
 ## Требования
