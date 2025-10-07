@@ -1,0 +1,19 @@
+[Unit]
+Description=Telegram Obsidian Bot
+After=network.target
+
+[Service]
+Type=simple
+User=pin
+WorkingDirectory=/home/pin/projects/homies/python/telegram-obsidian-git-bot
+Environment=PATH=/home/pin/projects/homies/python/telegram-obsidian-git-bot/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=GIT_PYTHON_GIT_EXECUTABLE=/usr/bin/git
+Environment=GIT_PYTHON_REFRESH=quiet
+ExecStart=/home/pin/projects/homies/python/telegram-obsidian-git-bot/venv/bin/python /home/pin/projects/homies/python/telegram-obsidian-git-bot/bot.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

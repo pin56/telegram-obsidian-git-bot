@@ -1,3 +1,4 @@
 .env
 obsidian_files
-.venv
+venv
+__pycache__
