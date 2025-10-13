@@ -1,4 +1,5 @@
-import os
+
+from WOL import send_wol
 
 # Set GitPython refresh environment variable to suppress warnings
 os.environ['GIT_PYTHON_REFRESH'] = 'quiet'
@@ -14,6 +15,8 @@ load_dotenv()
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 USER_ID = os.getenv('USER_ID')
 
+
+MAC_ADDRESS = os.getenv('PC_MAC_ADDRESS')
 
 # Parse user IDs, handling both single ID and comma-separated IDs
 if USER_ID:
@@ -40,10 +43,23 @@ async def check_user(user: Update.effective_user):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
     user = update.effective_user
-    print(users)
-    if check_user:
+    print(f'start, users: {user}')
+    if await check_user(user):
         await update.message.reply_html(
             rf"Hi {user.mention_html()}!",
+            reply_markup=ForceReply(selective=True),
+        )
+
+async def run_pc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Send a message when the command /start is issued."""
+    user = update.effective_user
+    print(f'run pc, users: {user}')
+    if await check_user(user):
+        
+        
+        send_wol(mac_address=MAC_ADDRESS)
+        await update.message.reply_html(
+            rf"Пакет отправлен!",
             reply_markup=ForceReply(selective=True),
         )
 
@@ -53,8 +69,8 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Echo the user message."""
     user = update.effective_user
     logger.info(f"Received message from user {user.id}, authorized users: {users}")
-    
-    if check_user(update.effective_user):
+    print(f'save_to_file(echo), users: {users}')
+    if await check_user(update.effective_user):
         urls = []
         if update.message.caption_entities:
             for i in update.message.caption_entities:
@@ -139,12 +155,13 @@ def main() -> None:
     
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))
-
+    application.add_handler(CommandHandler("run_pc", run_pc))
     # on non command i.e message - echo the message on Telegram
     application.add_handler(MessageHandler(filters.ALL, echo))
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling(allowed_updates=Update.ALL_TYPES)
+
 
 
 if __name__ == "__main__":

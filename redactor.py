@@ -1,4 +1,6 @@
 import os
+import shutil
+import tempfile
 
 # Set GitPython refresh environment variable to suppress warnings
 os.environ['GIT_PYTHON_REFRESH'] = 'quiet'
@@ -18,7 +20,7 @@ os.environ['GIT_SSH_COMMAND'] = 'ssh -o StrictHostKeyChecking=no'
 load_dotenv()
 
 REPO_URL = os.getenv("REPO_URL")
-GIT_TOKEN = os.getenv("GIT_TOKEN")
+
 OBSIDIAN_FILE = os.getenv('FILE_NAME')
 LOCAL_REPO = os.getenv("REPO_NAME")
 
@@ -95,13 +97,54 @@ def load_from_git():
             return True
         except Exception as e:
             print(f"Error pulling changes: {e}")
+            # Fallback 1: try to recover the working tree without re-cloning
             try:
-                print("Trying to re-clone repository...")
-                import shutil
-                shutil.rmtree(LOCAL_REPO)
-                repo = git.Repo.clone_from(REPO_URL, LOCAL_REPO)
-                print("Repository re-cloned successfully")
+                print("Attempting hard reset and clean...")
+                repo.git.reset('--hard')
+                repo.git.clean('-fdx')
+                origin = repo.remote(name='origin')
+                origin.fetch()
+                # Try fast-forward to origin/HEAD if available
+                try:
+                    default_ref = origin.refs[0]
+                    repo.git.checkout(default_ref)
+                except Exception:
+                    pass
+                origin.pull()
+                print("Repository recovered via reset/clean")
                 return True
+            except Exception as e_reset:
+                print(f"Reset/clean failed: {e_reset}")
+
+            # Fallback 2: re-clone into a temporary directory and swap contents
+            try:
+                print("Re-cloning repository into a temporary directory...")
+                tmp_dir_parent = os.path.dirname(os.path.abspath(LOCAL_REPO)) or '.'
+                with tempfile.TemporaryDirectory(dir=tmp_dir_parent) as tmp_dir:
+                    tmp_repo_path = os.path.join(tmp_dir, 'repo')
+                    git.Repo.clone_from(REPO_URL, tmp_repo_path)
+
+                    # Replace contents of LOCAL_REPO without deleting the mount point itself
+                    print("Replacing repository contents atomically...")
+                    # Remove everything inside LOCAL_REPO
+                    for entry in os.listdir(LOCAL_REPO):
+                        entry_path = os.path.join(LOCAL_REPO, entry)
+                        try:
+                            if os.path.islink(entry_path) or os.path.isfile(entry_path):
+                                os.unlink(entry_path)
+                            elif os.path.isdir(entry_path):
+                                shutil.rmtree(entry_path)
+                        except Exception as rm_err:
+                            print(f"Warning: failed to remove {entry_path}: {rm_err}")
+
+                    # Move new contents in
+                    for entry in os.listdir(tmp_repo_path):
+                        src = os.path.join(tmp_repo_path, entry)
+                        dst = os.path.join(LOCAL_REPO, entry)
+                        shutil.move(src, dst)
+
+                    print("Repository re-cloned and contents replaced successfully")
+                    return True
             except Exception as e2:
                 print(f"Error re-cloning repository: {e2}")
                 return str(e2)

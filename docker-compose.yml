@@ -1,0 +1,29 @@
+
+services:
+  bot:
+    build: .
+    container_name: telegram-obsidian-git-bot
+    restart: unless-stopped
+    environment:
+      # Required secrets/tokens
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - USER_ID=${USER_ID}
+      - REPO_URL=${REPO_URL}
+
+      - FILE_NAME=${FILE_NAME}
+      - REPO_NAME=${REPO_NAME}
+      # Make git available at a known path (used by redactor.py)
+      - GIT_PYTHON_REFRESH=quiet
+      - GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no
+    # Use host network to access host services
+    network_mode: "host"
+    volumes:
+      # Persist cloned rep сo between restarts (mounted into /app/${REPO_NAME})
+      - repo_data:/app/${REPO_NAME}
+      # Mount SSH keys for Git authentication
+      - ~/.ssh:/root/.ssh
+
+volumes:
+  repo_data:
+
+
